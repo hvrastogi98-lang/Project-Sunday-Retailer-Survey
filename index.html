@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Project Sunday — Retailer Survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Karla:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1F5FBF; --blue-dk:#174A96; --blue-lt:#EEF4FC; --blue-bd:#B9CFEF;
+  --dark:#0F0F0F; --ink:#1C1C1C; --mid:#6B6B6B; --light:#F0EFED; --white:#FFFFFF;
+  --border:#DDDBD8; --success:#2A7A4B; --error:#C0392B; --warn:#D9822B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--light);color:var(--ink);font-family:'Karla',system-ui,sans-serif;font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+.hdr{position:sticky;top:0;z-index:20}
+.topbar{background:var(--dark);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;gap:12px}
+.logo{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:.06em;font-size:15px;white-space:nowrap}
+.logo em{font-style:normal;color:#7FB0F5}
+.sec-label{font-size:12px;color:#BDBDBD;text-align:right}
+.progress{height:4px;background:#2A2A2A}
+.progress>div{height:100%;background:var(--blue);transition:width .3s}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px 110px}
+.banner{background:#FFF7E6;border:1px solid #F3D9A4;border-radius:6px;padding:10px 12px;font-size:13px;margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.banner button{background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;white-space:nowrap}
+.sec-head{margin:6px 0 14px}
+.sec-kicker{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--blue)}
+.sec-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin:2px 0}
+.sec-est{font-size:13px;color:var(--mid)}
+.card{background:var(--white);border:1px solid var(--border);border-radius:6px;margin-bottom:14px;overflow:hidden}
+.card-head{background:#F7F6F4;padding:9px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.q-num{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--blue)}
+.badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px;color:#fff;letter-spacing:.04em}
+.b-high{background:var(--error)}.b-med{background:var(--warn)}.b-low{background:#9A9A9A}
+.method{margin-left:auto;font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;text-align:right}
+.card-body{padding:14px}
+.q-text{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:6px}
+.q-hint{font-style:italic;font-size:12.5px;color:var(--mid);margin-bottom:10px}
+.note{background:var(--blue-lt);border-left:3px solid var(--blue);padding:8px 12px;font-size:12.5px;margin:8px 0;border-radius:0 4px 4px 0}
+.warnbox{background:#FDF1E7;border-left:3px solid var(--warn);padding:8px 12px;font-size:12.5px;margin:8px 0;border-radius:0 4px 4px 0}
+label.f{display:block;font-size:12.5px;font-weight:600;color:#444;margin:8px 0 4px}
+input[type=text],input[type=number],input[type=month],select,textarea{width:100%;padding:10px;border:1px solid #CFCCC8;border-radius:6px;background:#fff;font-size:15px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(31,95,191,.15)}
+textarea{min-height:60px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2{display:grid;grid-template-columns:minmax(84px,auto) 1fr;gap:10px;align-items:center}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.inr{font-size:12px;color:var(--blue);margin-top:3px;min-height:14px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 6px}
+.chip{border:1px solid #CFCCC8;background:#fff;border-radius:18px;padding:7px 13px;font-size:13.5px;cursor:pointer;line-height:1.2}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip.hl{border-color:var(--blue-bd);font-weight:600}
+.chip.hl:not(.on){background:var(--blue-lt)}
+.chip.lock{opacity:.9;cursor:default}
+.chip.small{padding:5px 10px;font-size:12.5px}
+.sub{font-size:12.5px;font-weight:700;color:#444;margin:10px 0 2px;text-transform:uppercase;letter-spacing:.04em}
+.brand-block{border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin:8px 0;background:#fff}
+.brand-block.hl{background:var(--blue-lt);border-color:var(--blue-bd)}
+.brand-name{font-weight:700;font-size:14px;margin-bottom:4px}
+.brand-block.hl .brand-name{color:var(--blue-dk)}
+.rate{display:flex;gap:4px;flex-wrap:nowrap;margin:3px 0 8px}
+.rate button{flex:1;min-width:0;padding:8px 0;border:1px solid #CFCCC8;background:#fff;border-radius:5px;font-size:13px;cursor:pointer}
+.rate button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.rate-lbl{font-size:12.5px;color:#444;margin-top:4px}
+.foot{display:flex;gap:8px;align-items:center;padding:10px 14px;border-top:1px dashed var(--border);background:#FCFCFB;flex-wrap:wrap}
+.foot .chip{font-size:12px;padding:5px 10px}
+.foot textarea{margin-top:6px;min-height:48px;font-size:14px}
+.rm-wrap{flex-basis:100%}
+.dk-on .card-body{opacity:.45}
+.tracker{font-size:12.5px;margin-top:6px;font-weight:600}
+.tracker.ok{color:var(--success)}.tracker.bad{color:var(--error)}.tracker.pend{color:var(--warn)}
+.addrow{display:flex;gap:8px;margin-top:6px}
+.addrow input{flex:1}
+.btn{border:none;border-radius:6px;padding:12px 18px;font-weight:700;font-family:'Syne',sans-serif;font-size:14px;cursor:pointer}
+.btn-p{background:var(--blue);color:#fff}.btn-s{background:#fff;border:1px solid #CFCCC8;color:var(--ink)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:10px 16px;z-index:20}
+.nav-in{max-width:640px;margin:0 auto;display:flex;gap:10px}
+.nav-in .btn{flex:1}
+.msg{max-width:640px;margin:0 auto 6px;font-size:13px;text-align:center}
+.msg.err{color:var(--error)}.msg.load{color:var(--blue)}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.thumb{position:relative;width:78px;height:78px;border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb button{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:12px}
+.overlay{position:fixed;inset:0;background:rgba(15,15,15,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.overlay.show{display:flex}
+.ov-box{background:#fff;border-radius:10px;max-width:420px;width:100%;padding:26px 20px;text-align:center}
+.ov-box h2{font-family:'Syne',sans-serif;font-size:20px;margin:8px 0}
+.ov-box p{font-size:14px;color:var(--mid);margin-bottom:16px}
+.ov-box .btn{width:100%;margin-top:8px;display:block;text-decoration:none}
+.muted{color:var(--mid);font-size:12.5px}
+.hidden{display:none!important}
+@media (max-width:380px){.grid3{grid-template-columns:1fr 1fr}.rate button{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="hdr"><div class="topbar"><div class="logo">PROJECT <em>SUNDAY</em></div><div class="sec-label" id="secLabel"></div></div>
+<div class="progress"><div id="prog" style="width:0%"></div></div></div>
+<div class="wrap">
+  <div id="draftBanner" class="banner hidden"><span>Draft restored from earlier on this phone.</span><button type="button" id="freshBtn">Start fresh</button></div>
+  <div id="sec1"></div><div id="sec2" class="hidden"></div><div id="sec3" class="hidden"></div><div id="sec4" class="hidden"></div>
+</div>
+<div class="nav"><div class="msg" id="msg"></div><div class="nav-in"><button class="btn btn-s" id="backBtn" type="button">← Back</button><button class="btn btn-p" id="nextBtn" type="button">Next →</button></div></div>
+<div class="overlay" id="okOverlay"><div class="ov-box">
+  <div style="font-size:42px">✅</div><h2>Submitted successfully</h2>
+  <p>The response has been saved. Now fill the pricing survey for this store, or start the next outlet.</p>
+  <a class="btn btn-p" id="pricingLink" href="#">Open pricing survey for this store →</a>
+  <button class="btn btn-s" type="button" id="againBtn">Submit another response</button>
+</div></div>
+
+<script>
+/* ============ CONFIG ============ */
+const SCRIPT_URL = 'PASTE_APPS_SCRIPT_URL_HERE';           // Google Apps Script web app URL
+const PRICING_URL = '../Project-Sunday-Pricing-Survey/';     // pricing survey link (same GitHub account)
+const DRAFT_KEY = 'sunday_retailer_draft_v1';
+
+/* ============ LISTS ============ */
+const BASE_BRANDS = ['Hocco','Amul','Havmor','Vadilal',"Kwality Wall's",'Cream Bell','Mother Dairy',"Dinshaw's",'Arun','Local / unbranded'];
+const OWN_FREEZER = "Retailer's own freezer";
+const OUTLET_TYPES = ['Kirana / general store','Bakery / sweet shop','Paan / cigarette shop','Dairy / milk booth','Others'];
+const PATHS = ['Stockist','Lapsed','Never stocked'];
+const FREEZER_STATUS = ['Hocco freezer, only Hocco inside','Hocco freezer, shared with other brands','No Hocco freezer'];
+const FORMATS = ['Family tubs (multi-serve)','Cups','Cones','Sticks and bars','Multi-packs (multi-serve)','Kulfi and traditional','Other frozen'];
+const DK = "Don't know / Refused";
+const Q17_ACTIONS = ['Gave extra schemes or margin','Offered a freezer','Asked to keep only their products in the freezer','Asked you to stop selling another brand','Asked you to sell only their brand'];
+const Q18_PARAMS = ['Product quality','Customer demand','Margins and schemes','Supply and sales team','Melt / damage handling','Freezer support','Recommend to other shops'];
+
+const QMETA = {
+  Q1:{p:'MED',m:'Observe'}, Q2:{p:'HIGH',m:'Observe + Ask'}, Q3:{p:'HIGH',m:'Observe'}, Q4:{p:'HIGH',m:'Ask'},
+  Q5:{p:'HIGH',m:'Ask'}, Q6:{p:'MED',m:'Ask'}, Q7:{p:'MED',m:'Observe'}, Q8:{p:'HIGH',m:'Ask'}, Q9:{p:'HIGH',m:'Ask'},
+  Q10:{p:'HIGH',m:'Ask'}, Q11:{p:'MED',m:'Ask'}, Q12:{p:'HIGH',m:'Ask'}, Q13:{p:'MED',m:'Ask'}, Q14:{p:'MED',m:'Ask'},
+  Q15:{p:'MED',m:'Ask'}, Q16:{p:'MED',m:'Ask'}, Q17:{p:'HIGH',m:'Ask'}, Q18:{p:'HIGH',m:'Ask'}, Q19:{p:'MED',m:'Ask'},
+  B1:{p:'HIGH',m:'Ask'}, B2:{p:'HIGH',m:'Ask'}, B3:{p:'HIGH',m:'Ask'}, B4:{p:'MED',m:'Ask'}, B5:{p:'MED',m:'Ask'}
+};
+const ALL_QIDS = Object.keys(QMETA);
+const SECTIONS = {
+  1:{name:'Store & freezers', est:'Est. 5 min · Observe first, then ask'},
+  2:{name:'Sales & terms', est:'Est. 5 min · Ask the retailer for all numbers'},
+  3:{name:'Customers & feedback', est:'Est. 5 min · Customer pull, stock losses, ratings'},
+  4:{name:'Non-stockists', est:'Est. 3 min · Only for lapsed and never-stocked outlets'}
+};
+
+/* ============ STATE ============ */
+function newId(){
+  const d=new Date(), p=n=>String(n).padStart(2,'0');
+  return 'SUN-'+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+}
+function blankState(){
+  return {id:newId(), started:new Date().toISOString(), meta:{enumerator:'',city:'',area:'',store:'',test:false},
+    path:'', freezerStatus:'', outletType:'', outletOther:'', customBrands:[], compare:null, q:{}, dk:{}, rm:{}, rmOpen:{}};
+}
+let state = blankState();
+let photos = [];          // {name,type,data(base64),url} — not saved in draft
+let cur = 1;
+
+/* ============ HELPERS ============ */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function get(path){return path.split('.').reduce((o,k)=>o==null?undefined:o[k],state)}
+function set(path,val){const ks=path.split('.');let o=state;ks.slice(0,-1).forEach(k=>{if(o[k]==null||typeof o[k]!=='object')o[k]={};o=o[k]});o[ks[ks.length-1]]=val}
+const num = v=>{const n=parseFloat(String(v==null?'':v).replace(/,/g,''));return isNaN(n)?null:n};
+const inr = v=>{const n=num(v);return n==null?'':'₹'+Math.round(n).toLocaleString('en-IN')};
+const arr = path=>{const v=get(path);return Array.isArray(v)?v:[]};
+const isStockist = ()=>state.path==='Stockist';
+const isB = ()=>state.path==='Lapsed'||state.path==='Never stocked';
+const allBrands = ()=>BASE_BRANDS.concat(state.customBrands);
+const stocked = ()=>allBrands().filter(b=>arr('q.q2_stocked').includes(b));
+function compareBrands(){
+  let c = Array.isArray(state.compare) ? state.compare.filter(b=>allBrands().includes(b)) : stocked();
+  if(isStockist() && !c.includes('Hocco')) c=['Hocco'].concat(c);
+  if(!isStockist()) c=c.filter(b=>b!=='Hocco' || stocked().includes('Hocco'));
+  return allBrands().filter(b=>c.includes(b));
+}
+function freezerRows(){ return stocked().concat([OWN_FREEZER]); }
+function brandedFreezers(){ return stocked().filter(b=>(num(get('q.q3.'+b+'.count'))||0)>0); }
+function sectionsList(){ return isStockist()?[1,2,3]:[1,2,3,4]; }
+function hlClass(b){ return b==='Hocco'?' hl':''; }
+
+/* ============ UI BUILDERS ============ */
+function chip(path,val,label,multi,extra){
+  const v=get(path); const on = multi ? (Array.isArray(v)&&v.includes(val)) : v===val;
+  return `<button type="button" class="chip${on?' on':''}${extra||''}" data-chip="${esc(path)}" data-val="${esc(val)}" data-multi="${multi?1:0}">${esc(label==null?val:label)}</button>`;
+}
+function chips(path,vals,multi,hlHocco){ return `<div class="chips">${vals.map(v=>chip(path,v,v,multi,hlHocco&&v==='Hocco'?' hl':'')).join('')}</div>`; }
+function txt(path,ph,type){ return `<input type="${type||'text'}" data-k="${esc(path)}" value="${esc(get(path))}" placeholder="${esc(ph||'')}"${type==='number'?' inputmode="decimal"':''}>`; }
+function money(path,ph){ return `<input type="number" inputmode="numeric" data-k="${esc(path)}" data-inr="1" value="${esc(get(path))}" placeholder="${esc(ph||'₹')}"><div class="inr" data-inr-for="${esc(path)}">${inr(get(path))}</div>`; }
+function sel(path,opts,ph,rr){ const v=get(path); return `<select data-k="${esc(path)}"${rr?' data-rr="1"':''}><option value="">${esc(ph||'— Select —')}</option>${opts.map(o=>`<option${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select>`; }
+function rate(path,max,min){ min=min==null?1:min; let h='<div class="rate">'; for(let i=min;i<=max;i++){h+=`<button type="button" class="${String(get(path))===String(i)?'on':''}" data-chip="${esc(path)}" data-val="${i}" data-multi="0">${i}</button>`;} return h+'</div>'; }
+function card(id,text,hint,body,opts){
+  opts=opts||{}; const m=QMETA[id]||{}; const dk=!!state.dk[id]; const rmOpen=!!(state.rmOpen[id]||state.rm[id]);
+  const badge = m.p?`<span class="badge b-${m.p.toLowerCase()}">${m.p==='MED'?'MEDIUM':m.p}</span>`:'';
+  return `<div class="card${dk?' dk-on':''}" id="card-${id}">
+    <div class="card-head"><span class="q-num">${esc(id)}</span>${badge}<span class="method">${esc(m.m||'')}</span></div>
+    <div class="card-body"><div class="q-text">${text}</div>${hint?`<div class="q-hint">${hint}</div>`:''}${body}</div>
+    ${opts.noFoot?'':`<div class="foot">
+      <button type="button" class="chip${dk?' on':''}" data-dk="${id}">${DK}</button>
+      <button type="button" class="chip" data-rmtoggle="${id}">${rmOpen?'− Remarks':'+ Remarks'}</button>
+      ${rmOpen?`<div class="rm-wrap"><textarea data-k="rm.${id}" placeholder="What did the retailer say? (optional)">${esc(state.rm[id])}</textarea></div>`:''}
+    </div>`}
+  </div>`;
+}
+function plainCard(title,body){ return `<div class="card"><div class="card-head"><span class="q-num">${esc(title)}</span></div><div class="card-body">${body}</div></div>`; }
+function secHead(n){ const s=SECTIONS[n]; const list=sectionsList(); const i=list.indexOf(n)+1;
+  return `<div class="sec-head"><div class="sec-kicker">SECTION ${i} OF ${list.length}</div><div class="sec-title">${esc(s.name)}</div><div class="sec-est">${esc(s.est)}</div></div>`; }
+function addBrandRow(){ return `<div class="addrow"><input type="text" id="newBrand" placeholder="Brand not in list"><button type="button" class="btn btn-s" id="addBrandBtn">+ Add brand</button></div>`; }
+
+/* ============ SECTION 1 ============ */
+function renderS1(){
+  let h = secHead(1);
+  h += plainCard('Outlet details', `
+    <label class="f">Enumerator name *</label>${txt('meta.enumerator','Your full name')}
+    <div class="grid2"><div><label class="f">City</label>${txt('meta.city','e.g. Ahmedabad')}</div><div><label class="f">Area / locality</label>${txt('meta.area','e.g. Navrangpura')}</div></div>
+    <label class="f">Store name *</label>${txt('meta.store','e.g. Shree Ganesh General Store')}
+    <div style="margin-top:10px">${`<button type="button" class="chip${state.meta.test?' on':''}" data-toggle="meta.test">Test response (tick for practice or trial runs)</button>`}</div>
+    <div class="muted" style="margin-top:8px">Outlet ID: <b>${esc(state.id)}</b></div>`);
+  h += plainCard('Setup', `
+    <div class="q-text">Store type for this survey</div>
+    <div class="q-hint">Enumerator to select. Do not read this out. It decides which questions appear.</div>
+    ${chips('path',PATHS,false)}
+    <div class="muted">Stockist = sells Hocco now · Lapsed = stopped Hocco in the last 2 years · Never stocked = has never sold Hocco</div>
+    ${isStockist()?`<label class="f">Hocco freezer status</label>${chips('freezerStatus',FREEZER_STATUS,false)}`:''}
+    <label class="f">Outlet type</label>${chips('outletType',OUTLET_TYPES,false)}
+    ${state.outletType==='Others'?txt('outletOther','Type the outlet type'):''}`);
+
+  // Q1
+  const L=num(get('q.q1_len')), W=num(get('q.q1_wid'));
+  h += card('Q1','What is the approximate size of this store?',
+    'Count your steps wall to wall: 1 step ≈ 2.5 ft. Enter length and width in steps, or type the sq ft directly.',
+    `<div class="grid3"><div><label class="f">Length (steps)</label>${txt('q.q1_len','steps','number')}</div><div><label class="f">Width (steps)</label>${txt('q.q1_wid','steps','number')}</div><div><label class="f">Size (sq ft)</label>${txt('q.q1_sqft',L&&W?String(Math.round(L*2.5*W*2.5)):'sq ft','number')}</div></div>
+     <div class="note" id="q1class">${sizeClassText()}</div>`);
+
+  // Q2
+  const hoccoWarn = (isStockist()&&!arr('q.q2_stocked').includes('Hocco'))?'<div class="warnbox">You chose "Stockist" but Hocco is not ticked below. Please check.</div>':
+                    (state.path==='Lapsed'&&!arr('q.q2_dropped').includes('Hocco'))?'<div class="warnbox">You chose "Lapsed". Tick Hocco under "Stopped selling".</div>':'';
+  h += card('Q2','Which ice cream brands does this store sell now? Which did it stop selling in the last 2 years?',
+    'Look at the freezers and shelves, then ask the retailer to confirm.',
+    `${hoccoWarn}<div class="sub">Sells now</div>${chips('q.q2_stocked',allBrands(),true,true)}
+     <div class="sub">Stopped selling (last 2 years)</div>${chips('q.q2_dropped',allBrands(),true,true)}
+     ${addBrandRow()}<div class="muted" style="margin-top:6px">Brands selling now: <b>${stocked().length}</b></div>`);
+
+  // Q3
+  const fr = freezerRows();
+  h += card('Q3','How many freezers does each brand have in this store? Do they hold other brands\' ice cream?',
+    'Count every ice cream freezer. Open each one and check whether other brands\' products are inside.',
+    stocked().length? fr.map(b=>`<div class="brand-block${hlClass(b)}"><div class="brand-name">${esc(b)}</div>
+      <div class="grid2"><div><label class="f">No. of freezers</label><input type="number" inputmode="numeric" data-k="${esc('q.q3.'+b+'.count')}" data-rr="1" value="${esc(get('q.q3.'+b+'.count'))}" placeholder="0"></div>
+      <div><label class="f">Other brands inside</label>${sel('q.q3.'+b+'.other',['None','Some','A lot'])}</div></div></div>`).join('')
+      : '<div class="note">Tick the brands the store sells in Q2 first.</div>');
+
+  // Q4
+  const bf = brandedFreezers();
+  h += card('Q4','For each brand\'s freezer, how did you get it, and on what terms?',
+    'Ask: "Did the company give you this freezer or did you ask for it? Did you pay a deposit? Do they help with the electricity bill? Can you keep other brands in it?"',
+    bf.length? bf.map(b=>`<div class="brand-block${hlClass(b)}"><div class="brand-name">${esc(b)}</div>
+      <div class="grid2"><div><label class="f">How did you get it?</label>${sel('q.q4.'+b+'.how',['Company offered','I asked for it','Other'])}</div>
+      <div><label class="f">When received</label><input type="month" data-k="${esc('q.q4.'+b+'.when')}" value="${esc(get('q.q4.'+b+'.when'))}"></div>
+      <div><label class="f">Deposit paid (₹)</label>${money('q.q4.'+b+'.deposit','0 if none')}</div>
+      <div><label class="f">Electricity support?</label>${sel('q.q4.'+b+'.elec',['Yes','No'])}</div>
+      <div><label class="f">Only this brand inside?</label>${sel('q.q4.'+b+'.excl',['Yes','No'])}</div></div></div>`).join('')
+      : '<div class="note">Enter the number of freezers per brand in Q3 first.</div>');
+
+  // Q5 (stockists only)
+  if(isStockist()) h += card('Q5','How much do you sell from each brand\'s freezer in a month? How long did it take to reach that level?',
+    'Ask: "In a busy summer month, how much [brand] ice cream do you sell from this freezer? And in a winter month?"',
+    bf.length? bf.map(b=>`<div class="brand-block${hlClass(b)}"><div class="brand-name">${esc(b)}</div>
+      <div class="grid2"><div><label class="f">Peak month ₹</label>${money('q.q5.'+b+'.peak')}</div><div><label class="f">Off-season ₹</label>${money('q.q5.'+b+'.off')}</div></div>
+      <label class="f">Time to reach steady sales</label>${sel('q.q5.'+b+'.ramp',['Less than 3 months','3 - 6 months','6 - 12 months','More than 12 months','Not yet steady'])}</div>`).join('')
+      : '<div class="note">Enter the number of freezers per brand in Q3 first.</div>');
+
+  // Q6
+  const q6=get('q.q6');
+  h += card('Q6','Would you take another ice cream freezer?','Ask: "If a company offered you one more ice cream freezer, would you take it?"',
+    `${chips('q.q6',['Yes','Only on some conditions','No'],false)}
+     ${q6==='Only on some conditions'||q6==='No'?`<div class="sub">${q6==='No'?'Why not?':'Which conditions?'}</div>${chips('q.q6_why',['Electricity support','No deposit','Better margin or scheme','Smaller freezer','No space','Electricity cost too high','Current freezers are enough','Other'],true)}`:''}`);
+
+  // Q7
+  h += card('Q7','Count the different ice cream products you can see for each brand.','Count each flavour and each pack size as one product.',
+    stocked().length? stocked().map(b=>`<div class="brand-block${hlClass(b)}"><div class="row2"><div class="brand-name">${esc(b)}</div><div>${txt('q.q7.'+b,'No. of products','number')}</div></div></div>`).join('')
+    : '<div class="note">Tick the brands the store sells in Q2 first.</div>');
+  return h;
+}
+function sizeClassText(){
+  let sq=num(get('q.q1_sqft')); const L=num(get('q.q1_len')),W=num(get('q.q1_wid'));
+  if(sq==null&&L&&W) sq=Math.round(L*2.5*W*2.5);
+  if(sq==null) return 'Size class appears here: A = Large (500+ sq ft) · B = Medium (200–500) · C = Small (under 200)';
+  return `≈ <b>${sq.toLocaleString('en-IN')} sq ft</b> → <b>${sizeClass(sq)}</b>`;
+}
+function sizeClass(sq){ return sq>=500?'A — Large (500+ sq ft)':sq>=200?'B — Medium (200–500 sq ft)':'C — Small (under 200 sq ft)'; }
+function sqft(){ let sq=num(get('q.q1_sqft')); const L=num(get('q.q1_len')),W=num(get('q.q1_wid')); if(sq==null&&L&&W) sq=Math.round(L*2.5*W*2.5); return sq; }
+
+/* ============ SECTION 2 ============ */
+function renderS2(){
+  let h = secHead(2);
+  const cb = compareBrands();
+  const pool = allBrands().filter(b=>stocked().includes(b)||(isStockist()&&b==='Hocco')||(Array.isArray(state.compare)&&state.compare.includes(b)));
+  h += plainCard('Setup · Select brands to compare', `
+    <div class="q-hint">Pre-selected from Q2 (brands sold now). ${isStockist()?'Hocco is always included.':''} Tap to remove or add. The brand questions below use these brands.</div>
+    <div class="chips">${pool.map(b=>{const on=cb.includes(b); const lock=isStockist()&&b==='Hocco';
+      return `<button type="button" class="chip${on?' on':''}${b==='Hocco'?' hl':''}${lock?' lock':''}" data-compare="${esc(b)}">${esc(b)}${lock?' ✓':''}</button>`}).join('')}</div>
+    ${pool.length?'':'<div class="note">No brands ticked in Q2 yet. Go back to Section 1, Q2.</div>'}`);
+
+  h += card('Q8','How much ice cream do you sell in a month, in the peak season and in the off-season?','All brands together. Peak = busy summer months.',
+    `<div class="grid2"><div><label class="f">Peak month ₹</label>${money('q.q8_peak')}</div><div><label class="f">Off-season ₹</label>${money('q.q8_off')}</div></div>`);
+
+  h += card('Q9','What share of your ice cream sales comes from each brand? Is each brand selling more or less than last year?',
+    'Shares must add up to 100%. The ₹ value is worked out from the peak month in Q8.',
+    cb.length===1? `<div class="note">Only one brand is being compared (${esc(cb[0])}), so its share is 100%.</div>${q9Block(cb[0],true)}`
+    : cb.length? cb.map(b=>q9Block(b,false)).join('')+`<div class="tracker" id="q9track"></div>` : '<div class="note">Select brands to compare above.</div>');
+
+  h += card('Q10','How many days of credit does each brand give you, and what is its main scheme?',
+    'Ask: "How many days after delivery do you pay [brand]? What offer do they give you most often?"',
+    cb.map(b=>`<div class="brand-block${hlClass(b)}"><div class="brand-name">${esc(b)}</div><div class="grid2">
+      <div><label class="f">Credit days</label>${txt('q.q10.'+b+'.credit','0 = cash','number')}</div>
+      <div><label class="f">Main scheme</label>${sel('q.q10.'+b+'.scheme',['Free units','Target incentive','Freezer incentive','Display payment','Cash discount','Other','None'])}</div></div></div>`).join('') || '<div class="note">Select brands to compare above.</div>');
+
+  if(isStockist()) h += card('Q11','After the GST cut in September 2025, did your margin per piece go up, stay the same, or go down? Which brand passed on the price cut best?','',
+    `${chips('q.q11_margin',['Went up','Stayed the same','Went down'],false)}
+     <label class="f">Brand that passed on the price cut best</label>${sel('q.q11_best',cb.concat(['None / not sure']))}`);
+  return h;
+}
+function q9Block(b,single){
+  return `<div class="brand-block${hlClass(b)}"><div class="brand-name">${esc(b)}</div><div class="grid2">
+    <div><label class="f">Share of sales (%)</label>${single?`<input type="number" value="100" disabled>`:`<input type="number" inputmode="decimal" data-k="${esc('q.q9.'+b+'.pct')}" data-live="q9" value="${esc(get('q.q9.'+b+'.pct'))}" placeholder="%">`}
+    <div class="inr" data-q9est="${esc(b)}">${q9Est(b,single)}</div></div>
+    <div><label class="f">Vs last year</label>${sel('q.q9.'+b+'.trend',['More','Same','Less','New (under 1 year)'])}</div></div></div>`;
+}
+function q9Est(b,single){ const pk=num(get('q.q8_peak')); const pct=single?100:num(get('q.q9.'+b+'.pct')); return pk&&pct?'≈ '+inr(pk*pct/100)+' in a peak month':''; }
+
+/* ============ SECTION 3 ============ */
+function renderS3(){
+  let h = secHead(3);
+  const cb = compareBrands();
+  const n=get('q.q12_n');
+  h += card('Q12','Out of 10 customers who buy ice cream, how many ask for a brand by name? Which brands do they ask for?',
+    'Include brands this store does not sell.',
+    `<label class="f">Customers asking by name (out of 10)</label>${rate('q.q12_n',10,0)}
+     <div class="sub">Brands customers ask for</div>${chips('q.q12_brands',allBrands(),true,true)}`);
+
+  h += card('Q13','If the brand a customer wants is out of stock, what do they usually do?','',
+    chips('q.q13',['Take another brand','Take another product of the same brand','Come back later','Leave without buying'],false));
+
+  if(cb.length>=2) h += card('Q14','When a customer does not ask for a brand, which one do you suggest, and why?','',
+    `${chips('q.q14_brand',cb,false,true)}<div class="sub">Why?</div>${chips('q.q14_why',['Better margin','Scheme or target','Better taste','Better value for customer','Stock to clear','Other'],true)}`);
+
+  if(isStockist()){
+    const q15=get('q.q15');
+    h += card('Q15','Are customers buying ice cream on apps like Blinkit, Zepto or Instamart instead of from you? Which types?','',
+      `${chips('q.q15',['Yes, a lot','Yes, somewhat','No','Not sure'],false)}
+       ${q15==='Yes, a lot'||q15==='Yes, somewhat'?`<div class="sub">Types most affected</div>${chips('q.q15_formats',FORMATS,true)}`:''}`);
+    h += card('Q16','In a peak month, how much ice cream stock do you lose to melting, damage or expiry? How does each brand handle it?','',
+      `${chips('q.q16_loss',['None','Less than 2%','2% - 5%','More than 5%'],false)}
+       ${cb.map(b=>`<div class="brand-block${hlClass(b)}"><div class="row2"><div class="brand-name">${esc(b)}</div><div>${sel('q.q16.'+b,['Full replacement','Partial / credit note','Retailer bears loss'])}</div></div></div>`).join('')}`);
+  }
+
+  h += card('Q17','In the last 12 months, did any brand do any of these at your store?','Ask each one. If yes, tap the brand(s) that did it.',
+    Q17_ACTIONS.map((a,i)=>{ const yn=get('q.q17y.a'+i); return `<div class="sub" style="text-transform:none;letter-spacing:0">${esc(a)}</div>${chips('q.q17y.a'+i,['Yes','No'],false)}${yn==='Yes'?chips('q.q17.a'+i,allBrands(),true,true):''}`; }).join(''));
+
+  h += card('Q18','Rate each brand from 1 to 10.','1 = Very poor · 5 = Average · 10 = Excellent. If the retailer says "it\'s okay", that is a 5.',
+    cb.map(b=>`<div class="brand-block${hlClass(b)}"><div class="brand-name">${esc(b)}</div>${Q18_PARAMS.map((p,i)=>`<div class="rate-lbl">${esc(p)}</div>${rate('q.q18.'+b+'.p'+i,10,1)}`).join('')}</div>`).join('') || '<div class="note">Select brands to compare in Section 2.</div>');
+
+  const add=get('q.q19_add');
+  h += card('Q19','Over the next 12 months, what will you do with each brand? Are you planning to add a new brand?','',
+    `${cb.map(b=>`<div class="brand-block${hlClass(b)}"><div class="row2"><div class="brand-name">${esc(b)}</div><div>${sel('q.q19.'+b,['Increase','Keep the same','Reduce','Stop selling'])}</div></div></div>`).join('')}
+     <div class="sub">Planning to add a new brand?</div>${chips('q.q19_add',['Yes','Maybe','No'],false)}
+     ${add==='Yes'||add==='Maybe'?`<label class="f">Which brand?</label>${chips('q.q19_addbrand',allBrands().filter(b=>!stocked().includes(b)),true,true)}`:''}`);
+
+  h += plainCard('Photos (optional)', `
+    <div class="q-hint">Add any photos you can take: store front, freezers, inside the freezers, price labels or packs.</div>
+    <input type="file" id="photoInput" accept="image/*" multiple>
+    <div class="thumbs" id="thumbs">${photos.map((p,i)=>`<div class="thumb"><img src="${p.url}" alt=""><button type="button" data-delphoto="${i}">✕</button></div>`).join('')}</div>
+    <div class="muted" style="margin-top:6px">Photos are not kept in the saved draft. If the page reloads, add them again.</div>`);
+  return h;
+}
+
+/* ============ SECTION 4 ============ */
+function renderS4(){
+  let h = secHead(4);
+  const lapsed = state.path==='Lapsed';
+  h += card('B1','Which of these ice cream brands have you heard of? Which brands\' salespeople have visited you in the last 12 months?','Read out the brand list.',
+    `<div class="sub">Heard of</div>${chips('q.b1_heard',allBrands(),true,true)}<div class="sub">Visited by their salespeople</div>${chips('q.b1_visited',allBrands(),true,true)}`);
+  const reasons=['Customers don\'t ask for it','Low margin / schemes','No freezer offered','No space','Current brand does not allow it','Poor supply or service','Melt / damage problems','Never approached','Not aware of the brand','Other'];
+  const known=arr('q.b1_heard').filter(b=>b!=='Hocco'&&!stocked().includes(b)&&b!=='Local / unbranded');
+  h += card('B2', lapsed?'Why did you stop selling Hocco? And why don\'t you sell another brand you know?':'Why don\'t you sell these brands?',
+    'Ask about Hocco and one other brand the retailer knows but does not sell.',
+    `<div class="brand-block hl"><div class="brand-name">Hocco — ${lapsed?'why stopped':'why not sold'}</div>${chips('q.b2_hocco',reasons,true)}</div>
+     <div class="brand-block"><label class="f">Other brand</label>${sel('q.b2_other',known.length?known:allBrands().filter(b=>b!=='Hocco'&&!stocked().includes(b)),'— Pick one brand —',true)}
+     ${get('q.b2_other')?`<div class="sub">Why not sold</div>${chips('q.b2_other_why',reasons,true)}`:''}</div>`);
+  h += card('B3','What would make you start selling a new ice cream brand?','Up to 3.',
+    chips('q.b3',['Free freezer','Higher margin than current brands','Introductory schemes / free stock','Longer credit','Replacement of melted or unsold stock','Customers asking for it / advertising','Reliable supply and service','Not interested in a new brand'],true));
+  h += card('B4','How likely are you to add a new ice cream brand in the next 12 months?','1 = Not at all likely · 10 = Very likely',rate('q.b4',10,1));
+  h += card('B5','Would your current brands\' freezer or scheme conditions stop you from adding a new brand?','',chips('q.b5',['Yes','Partly','No'],false));
+  return h;
+}
+
+/* ============ RENDER / NAV ============ */
+const RENDER={1:renderS1,2:renderS2,3:renderS3,4:renderS4};
+function render(n){ const el=$('#sec'+n); el.innerHTML=RENDER[n](); updateLive(); updateHeader(); }
+function updateHeader(){
+  const list=sectionsList(), i=list.indexOf(cur);
+  $('#secLabel').textContent=`Section ${i+1} of ${list.length} — ${SECTIONS[cur].name}`;
+  $('#prog').style.width=Math.round((i+1)/list.length*100)+'%';
+  $('#backBtn').style.visibility=i===0?'hidden':'visible';
+  $('#nextBtn').textContent= i===list.length-1?'Submit survey':'Next →';
+}
+function showSection(n){
+  cur=n; [1,2,3,4].forEach(i=>$('#sec'+i).classList.toggle('hidden',i!==n)); render(n);
+  setMsg(''); window.scrollTo(0,0);
+}
+function rerender(){ const y=window.scrollY; render(cur); window.scrollTo(0,y); }
+function setMsg(t,cls){ const m=$('#msg'); m.textContent=t; m.className='msg'+(cls?' '+cls:''); }
+
+function updateLive(){
+  document.querySelectorAll('[data-inr-for]').forEach(d=>d.textContent=inr(get(d.dataset.inrFor)));
+  const c=$('#q1class'); if(c) c.innerHTML=sizeClassText();
+  document.querySelectorAll('[data-q9est]').forEach(d=>{const b=d.dataset.q9est; d.textContent=q9Est(b,compareBrands().length===1);});
+  const t=$('#q9track'); if(t){ const tot=compareBrands().reduce((s,b)=>s+(num(get('q.q9.'+b+'.pct'))||0),0);
+    t.className='tracker '+(tot===100?'ok':tot>100?'bad':'pend');
+    t.textContent= tot===100?'✓ Total 100%': tot>100?`⚠ Total ${tot}% — over by ${tot-100}%`:`Total ${tot}% · ${100-tot}% remaining`; }
+}
+
+/* ============ EVENTS ============ */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.chip!==undefined){
+    const p=t.dataset.chip, v=t.dataset.val;
+    if(t.dataset.multi==='1'){ let a=arr(p).slice(); a=a.includes(v)?a.filter(x=>x!==v):a.concat([v]);
+      if(p==='q.b3'&&a.length>3){ setMsg('Pick up to 3 for B3.','err'); return; }
+      set(p,a); }
+    else set(p, get(p)===v?'':v);
+    if(p==='path'){ state.compare=null; }
+    if(p==='q.q2_stocked'){ state.compare=null; }
+    saveDraft(); rerender(); return;
+  }
+  if(t.dataset.toggle){ set(t.dataset.toggle,!get(t.dataset.toggle)); saveDraft(); rerender(); return; }
+  if(t.dataset.dk){ state.dk[t.dataset.dk]=!state.dk[t.dataset.dk]; saveDraft(); rerender(); return; }
+  if(t.dataset.rmtoggle){ const id=t.dataset.rmtoggle; if(state.rmOpen[id]&&!state.rm[id]) state.rmOpen[id]=false; else state.rmOpen[id]=true; rerender(); return; }
+  if(t.dataset.compare){ const b=t.dataset.compare; if(isStockist()&&b==='Hocco') return;
+    let c=compareBrands(); c=c.includes(b)?c.filter(x=>x!==b):c.concat([b]); state.compare=c; saveDraft(); rerender(); return; }
+  if(t.id==='addBrandBtn'){ const inp=$('#newBrand'); let name=(inp.value||'').trim().replace(/\./g,'');
+    if(!name) return; if(allBrands().some(b=>b.toLowerCase()===name.toLowerCase())){ setMsg('That brand is already in the list.','err'); return; }
+    state.customBrands.push(name); saveDraft(); rerender(); return; }
+  if(t.dataset.delphoto!==undefined){ photos.splice(+t.dataset.delphoto,1); rerender(); return; }
+});
+document.addEventListener('input',e=>{
+  const el=e.target; if(!el.dataset||el.dataset.k===undefined) return;
+  set(el.dataset.k, el.value); saveDraft(); updateLive();
+});
+document.addEventListener('change',e=>{
+  const el=e.target;
+  if(el.id==='photoInput'){ addPhotos(el.files); return; }
+  if(el.dataset&&el.dataset.k!==undefined){ set(el.dataset.k, el.value); saveDraft(); if(el.dataset.rr) rerender(); else updateLive(); }
+});
+$('#backBtn').onclick=()=>{ const l=sectionsList(), i=l.indexOf(cur); if(i>0) showSection(l[i-1]); };
+$('#nextBtn').onclick=()=>{
+  const l=sectionsList(), i=l.indexOf(cur);
+  if(cur===1 && !state.path){ setMsg('Please choose whether this store is a Stockist, Lapsed or Never stocked.','err'); return; }
+  if(i<l.length-1) showSection(l[i+1]); else submitAll();
+};
+$('#freshBtn').onclick=()=>{ if(!confirmFresh()) return; clearDraft(); state=blankState(); photos=[]; $('#draftBanner').classList.add('hidden'); showSection(1); };
+function confirmFresh(){ return window.confirm('Clear everything and start a new survey?'); }
+$('#againBtn').onclick=()=>{ clearDraft(); state=blankState(); photos=[]; $('#okOverlay').classList.remove('show'); $('#nextBtn').disabled=false; showSection(1); };
+
+/* ============ PHOTOS ============ */
+function addPhotos(files){
+  [...files].forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=()=>{ const img=new Image(); img.onload=()=>{
+      const max=1280, s=Math.min(1,max/Math.max(img.width,img.height));
+      const cv=document.createElement('canvas'); cv.width=Math.round(img.width*s); cv.height=Math.round(img.height*s);
+      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+      const url=cv.toDataURL('image/jpeg',0.72);
+      photos.push({name:f.name,type:'image/jpeg',data:url.split(',')[1],url}); rerender();
+    }; img.src=reader.result; };
+    reader.readAsDataURL(f);
+  });
+  const inp=$('#photoInput'); if(inp) inp.value='';
+}
+
+/* ============ DRAFT ============ */
+let draftTimer=null;
+function saveDraft(){ clearTimeout(draftTimer); draftTimer=setTimeout(()=>{ try{ localStorage.setItem(DRAFT_KEY,JSON.stringify(state)); }catch(e){} },300); }
+function clearDraft(){ try{ localStorage.removeItem(DRAFT_KEY); }catch(e){} }
+function loadDraft(){ try{ const s=localStorage.getItem(DRAFT_KEY); if(!s) return false; const d=JSON.parse(s); if(!d||!d.id) return false;
+  state=Object.assign(blankState(),d); return true; }catch(e){ return false; } }
+
+/* ============ COLLECT ============ */
+function collect(){
+  const cols=[]; const add=(k,v)=>cols.push([k, v==null?'':(Array.isArray(v)?v.join(' | '):String(v))]);
+  const g=p=>{const v=get(p);return v==null?'':v};
+  const qa=(id)=>{ add(id+" Don't know / Refused", state.dk[id]?'Yes':''); add(id+' Remarks', state.rm[id]||''); };
+  const S=isStockist(), brands=allBrands(), cb=compareBrands();
+  add('Outlet ID',state.id); add('Test response',state.meta.test?'Yes':'No'); add('Started at (phone)',state.started); add('Submitted at (phone)',new Date().toISOString());
+  add('Enumerator',state.meta.enumerator.trim()); add('City',state.meta.city.trim()); add('Area / locality',state.meta.area.trim()); add('Store name',state.meta.store.trim());
+  add('Path',state.path); add('Hocco freezer status',S?state.freezerStatus:''); add('Outlet type',state.outletType); add('Outlet type (other)',state.outletType==='Others'?state.outletOther:'');
+  const sq=sqft(); add('Q1 Store size (sq ft)',sq==null?'':sq); add('Q1 Store class',sq==null?'':sizeClass(sq)); qa('Q1');
+  add('Q2 Brands sold now',stocked()); add('Q2 Brands stopped (last 2 years)',brands.filter(b=>arr('q.q2_dropped').includes(b))); add('Q2 No. of brands sold now',stocked().length); add('Q2 Hocco sold now',stocked().includes('Hocco')?'Yes':'No'); qa('Q2');
+  brands.concat([OWN_FREEZER]).forEach(b=>{ const on=freezerRows().includes(b); add('Q3 Freezers - '+b,on?g('q.q3.'+b+'.count'):''); add('Q3 Other brands inside - '+b,on?g('q.q3.'+b+'.other'):''); }); qa('Q3');
+  const bf=brandedFreezers();
+  brands.forEach(b=>{ const on=bf.includes(b); add('Q4 How obtained - '+b,on?g('q.q4.'+b+'.how'):''); add('Q4 Received (month) - '+b,on?g('q.q4.'+b+'.when'):''); add('Q4 Deposit (₹) - '+b,on?g('q.q4.'+b+'.deposit'):''); add('Q4 Electricity support - '+b,on?g('q.q4.'+b+'.elec'):''); add('Q4 Only this brand allowed - '+b,on?g('q.q4.'+b+'.excl'):''); }); qa('Q4');
+  brands.forEach(b=>{ const on=S&&bf.includes(b); add('Q5 Peak month sales from freezer (₹) - '+b,on?g('q.q5.'+b+'.peak'):''); add('Q5 Off-season month sales from freezer (₹) - '+b,on?g('q.q5.'+b+'.off'):''); add('Q5 Time to steady sales - '+b,on?g('q.q5.'+b+'.ramp'):''); }); qa('Q5');
+  add('Q6 Would take another freezer',g('q.q6')); add('Q6 Conditions / reasons',(g('q.q6')==='Yes'||!g('q.q6'))?'':arr('q.q6_why')); qa('Q6');
+  brands.forEach(b=>add('Q7 Products visible - '+b,stocked().includes(b)?g('q.q7.'+b):'')); qa('Q7');
+  add('Brands compared',cb);
+  add('Q8 Peak month ice cream sales (₹)',g('q.q8_peak')); add('Q8 Off-season month ice cream sales (₹)',g('q.q8_off')); qa('Q8');
+  brands.forEach(b=>{ const on=cb.includes(b); const pct=cb.length===1&&on?100:num(get('q.q9.'+b+'.pct')); const pk=num(get('q.q8_peak'));
+    add('Q9 Share of sales (%) - '+b,on&&pct!=null?pct:''); add('Q9 Est. peak month sales (₹) - '+b,on&&pct!=null&&pk?Math.round(pk*pct/100):''); add('Q9 Vs last year - '+b,on?g('q.q9.'+b+'.trend'):''); }); qa('Q9');
+  brands.forEach(b=>{ const on=cb.includes(b); add('Q10 Credit days - '+b,on?g('q.q10.'+b+'.credit'):''); add('Q10 Main scheme - '+b,on?g('q.q10.'+b+'.scheme'):''); }); qa('Q10');
+  add('Q11 Margin per piece after GST cut',S?g('q.q11_margin'):''); add('Q11 Brand that passed on the cut best',S?g('q.q11_best'):''); qa('Q11');
+  add('Q12 Customers asking by name (out of 10)',g('q.q12_n')); add('Q12 Brands customers ask for',brands.filter(b=>arr('q.q12_brands').includes(b))); qa('Q12');
+  add('Q13 When brand is out of stock',g('q.q13')); qa('Q13');
+  add('Q14 Brand suggested',cb.length>=2?g('q.q14_brand'):''); add('Q14 Why suggested',cb.length>=2?arr('q.q14_why'):''); qa('Q14');
+  add('Q15 Customers shifting to quick commerce',S?g('q.q15'):''); add('Q15 Types most affected',S&&/Yes/.test(g('q.q15'))?arr('q.q15_formats'):''); qa('Q15');
+  add('Q16 Stock lost in a peak month',S?g('q.q16_loss'):''); brands.forEach(b=>add('Q16 Melt / damage handling - '+b,S&&cb.includes(b)?g('q.q16.'+b):'')); qa('Q16');
+  Q17_ACTIONS.forEach((a,i)=>{ const yn=g('q.q17y.a'+i); add('Q17 '+a,yn); add('Q17 '+a+' - brands',yn==='Yes'?brands.filter(b=>arr('q.q17.a'+i).includes(b)):''); }); qa('Q17');
+  brands.forEach(b=>Q18_PARAMS.forEach((p,i)=>add('Q18 '+p+' - '+b,cb.includes(b)?g('q.q18.'+b+'.p'+i):''))); qa('Q18');
+  brands.forEach(b=>add('Q19 Plan for next 12 months - '+b,cb.includes(b)?g('q.q19.'+b):'')); add('Q19 Planning to add a new brand',g('q.q19_add')); add('Q19 Brand(s) to add',/Yes|Maybe/.test(g('q.q19_add'))?arr('q.q19_addbrand'):''); qa('Q19');
+  add('Photos (count)',photos.length);
+  const B=isB();
+  add('B1 Heard of',B?brands.filter(b=>arr('q.b1_heard').includes(b)):''); add('B1 Visited by salespeople (last 12 months)',B?brands.filter(b=>arr('q.b1_visited').includes(b)):''); qa('B1');
+  add('B2 Hocco - reasons',B?arr('q.b2_hocco'):''); add('B2 Other brand asked about',B?g('q.b2_other'):''); add('B2 Other brand - reasons',B&&g('q.b2_other')?arr('q.b2_other_why'):''); qa('B2');
+  add('B3 What would make them sell a new brand',B?arr('q.b3'):''); qa('B3');
+  add('B4 Likelihood to add a new brand (1-10)',B?g('q.b4'):''); qa('B4');
+  add('B5 Current brands\' conditions would stop a new brand',B?g('q.b5'):''); qa('B5');
+  return cols;
+}
+
+/* ============ SUBMIT ============ */
+async function submitAll(){
+  if(!state.meta.enumerator.trim()||!state.meta.store.trim()){ setMsg('⚠ Please fill in Enumerator name and Store name (Section 1).','err'); return; }
+  if(SCRIPT_URL.indexOf('PASTE_')===0){ setMsg('This survey is not connected to the Google Sheet yet. Tell the survey owner.','err'); return; }
+  const btn=$('#nextBtn'); btn.disabled=true; setMsg('Submitting… please do not close this page.','load');
+  const payload={survey:'retailer', id:state.id, cols:collect(), photos:photos.map((p,i)=>({name:p.name,type:p.type,data:p.data}))};
+  const body=JSON.stringify(payload);
+  const once=()=>Promise.race([fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body}),
+                                new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),45000))]);
+  try{
+    try{ await once(); }catch(e1){ if(e1.message==='timeout'){ setMsg('Still sending… retrying once.','load'); await once(); } else throw e1; }
+    const link=PRICING_URL+'?'+new URLSearchParams({oid:state.id,enumerator:state.meta.enumerator,city:state.meta.city,area:state.meta.area,store:state.meta.store,test:state.meta.test?'1':'0',brands:stocked().join('|')}).toString();
+    $('#pricingLink').href=link; clearDraft(); setMsg(''); $('#okOverlay').classList.add('show');
+  }catch(err){
+    btn.disabled=false;
+    setMsg(err.message==='timeout'?'⚠ No response after two tries. Check the internet and tap Submit again. Your answers are saved on this phone.':'⚠ Could not reach the server. Check the internet and tap Submit again. Your answers are saved on this phone.','err');
+  }
+}
+
+/* ============ START ============ */
+if(loadDraft()) $('#draftBanner').classList.remove('hidden');
+showSection(1);
+</script>
+</body>
+</html>
